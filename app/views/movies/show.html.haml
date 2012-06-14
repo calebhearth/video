@@ -1,11 +1,39 @@
-- div_for @movie do
-  .hero-unit
-  .movie-info
+= div_for @movie do
+  .hero-unit.span8
+    .video
+      .movie-heighter
+      %iframe.youtube-player{ type: "text/html",
+         src: "https://www.youtube.com/embed/#{ @movie.url }" }
+  .movie-info.well.span4{ style: 'overflow: auto' }
     %h2.name= @movie.name
     %section.description= @movie.description
-    %section.recommendable
-      %span.rating
-      %a.btn.vote +
-      %a.btn.vote -
-  .other-movies
-
+    %section.recommendable.pull-right
+      .btn-group
+        %span.btn.disabled.rating 100
+        %button.btn.btn-success.vote.icon-plus
+        %button.btn.btn-danger.vote.icon-minus
+  .other-movies.span4
+    %ul.nav.nav-tabs
+      %li
+        %a{ href: '#similar-videos', data_toggle: "tab" } Similar
+      %li
+        %a{ href: '#popular-videos', data_toggle: "tab" } Popular
+      %li
+        %a{ href: '#new-videos', data_toggle: "tab" } New
+    .tab-content
+      - %w{ similar popular new }.each do |type|
+        - active = type == 'similar' ? 'active' : ''
+        %section.tab-pane.row-fluid{ id: "##{ type }-videos",
+            class: active }
+          %ul.thumbnails
+            - 4.times do
+              %li.span3.thumbnail
+                %img{ src: "http://placehold.it/260x180" }
+                %h3 Movie Title
+                .description Lorem ipsum dolor sit amet...
+        - content_for :javascripts do
+          :javascript
+            $('.other-movies .nav-tabs a[href="##{ type }-videos"]').click(function(e) {
+              e.preventDefault();
+              $(this).tab('show');
+            });
